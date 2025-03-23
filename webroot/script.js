@@ -17,6 +17,7 @@ class App {
     this.output = /** @type {HTMLPreElement|null} */ (document.querySelector('#messageOutput'));
     this.storyContainer = /** @type {HTMLDivElement|null} */ (document.querySelector('#storyContainer'));
     this.postWebViewMessage = this.postWebViewMessage.bind(this);
+    const charCounter = document.getElementById('charCounter');
 
     // this.counterLabel = /** @type {HTMLSpanElement} */ (document.querySelector('#counter'));
     // this.counter = 0;
@@ -38,6 +39,11 @@ class App {
     //   // Sends a message to the Devvit app
     //   postWebViewMessage({ type: 'setCounter', data: { newCounter: this.counter - 1 } });
     // });
+
+    this.storyInput.addEventListener("input", () => {
+      const remaining = 80 - this.storyInput.value.length;
+      charCounter.textContent = `${remaining} characters remaining`;
+    })
 
     this.submitButton.addEventListener('click', () => {
       const newText = this.storyInput.value.trim();
