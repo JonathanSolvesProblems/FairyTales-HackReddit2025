@@ -18,6 +18,7 @@ class App {
     this.storyContainer = /** @type {HTMLDivElement|null} */ (document.querySelector('#storyContainer'));
     this.postWebViewMessage = this.postWebViewMessage.bind(this);
     const charCounter = document.getElementById('charCounter');
+    this.imageGallery = document.querySelector('#imageGallery');
 
     // this.counterLabel = /** @type {HTMLSpanElement} */ (document.querySelector('#counter'));
     // this.counter = 0;
@@ -84,11 +85,10 @@ class App {
     switch (message.type) {
       case 'initialData': {
         // Load initial data
-        const { username, storySoFar } = message.data;
+        const { username, storySoFar, images } = message.data;
         this.usernameLabel.innerText = username;
         this.updateStory(storySoFar);
-        // this.counter = currentCounter;
-        // this.counterLabel.innerText = `${this.counter}`;
+        this.updateImageGallery(images);
         break;
       }
       case 'updateStory': {
@@ -96,12 +96,10 @@ class App {
         this.updateStory(storySoFar); // Update story when receiving new parts
         break;
       }
-      // case 'updateCounter': {
-      //   const { currentCounter } = message.data;
-      //   this.counter = currentCounter;
-      //   this.counterLabel.innerText = `${this.counter}`;
-      //   break;
-      // }
+      case 'updateImages': {
+        this.updateImageGallery(message.data.images);
+        break;
+      }
       default:
         /** to-do: @satisifes {never} */
         const _ = message;
@@ -123,6 +121,28 @@ class App {
       const storyPart = document.createElement('p');
       storyPart.textContent = `${entry.username}: ${entry.text}`;
       this.storyContainer.appendChild(storyPart);
+    });
+  }
+
+  /**
+   * Updates the image gallery
+   * @param {Array<{ storyPart: string, imageURL: string }>} images
+   */
+  updateImageGallery(images) {
+    this.imageGallery.innerHTML = ''; // Clear existing images
+    images.forEach((entry) => {
+      const imageContainer = document.createElement('div');
+      const img = document.createElement('img');
+      img.src = entry.imageURL;
+      img.alt = `Inspired by: ${entry.storyPart}`;
+      img.style.maxWidth = '100%';
+
+      const caption = document.createElement('p');
+      caption.textContent = `Inspired by: "${entry.storyPart}"`;
+
+      imageContainer.appendChild(img);
+      imageContainer.appendChild(caption);
+      this.imageGallery.appendChild(imageContainer);
     });
   }
 }

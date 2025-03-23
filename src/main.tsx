@@ -1,12 +1,11 @@
 import "./createPost.js";
-
 import { Devvit, useState, useWebView } from "@devvit/public-api";
-
 import type { DevvitMessage, WebViewMessage } from "./message.js";
 
 Devvit.configure({
   redditAPI: true,
   redis: true,
+  http: true,
 });
 
 // Add a custom post type to Devvit
@@ -25,6 +24,11 @@ Devvit.addCustomPostType({
       return currentStory ? JSON.parse(currentStory) : [];
     });
 
+    const [images, setImages] = useState(async () => {
+      const imageData = await context.redis.get(`images_${context.postId}`);
+      return imageData ? JSON.parse(imageData) : [];
+    });
+
     const webView = useWebView<WebViewMessage, DevvitMessage>({
       // URL of your web view content
       url: "page.html",
@@ -36,8 +40,9 @@ Devvit.addCustomPostType({
             webView.postMessage({
               type: "initialData",
               data: {
-                username: username,
+                username,
                 storySoFar: story,
+                images,
               },
             });
             break;
@@ -52,13 +57,51 @@ Devvit.addCustomPostType({
             );
             setStory(updatedStory);
 
-            webView.postMessage({
-              type: "updateStory",
-              data: {
-                storySoFar: updatedStory,
-              },
-            });
+            try {
+              const apiResponse = await fetch(
+                "https://fairy-tales-hack-reddit2025.vercel.app/api/generateImage",
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    prompt: updatedStory.map((part) => part.text).join(" "),
+                  }),
+                }
+              );
+
+              if (apiResponse.ok) {
+                const imageBlob = await apiResponse.blob();
+                const imageURL = URL.createObjectURL(imageBlob);
+
+                // Save image to Redis along with the part of the story that inspired it.
+                const newImageEntry = {
+                  storyPart: message.data.newText,
+                  imageURL,
+                };
+                const updatedImages = [...images, newImageEntry];
+                await context.redis.set(
+                  `images_${context.postId}`,
+                  JSON.stringify(updatedImages)
+                );
+                setImages(updatedImages);
+
+                webView.postMessage({
+                  type: "updateStory",
+                  data: {
+                    storySoFar: updatedStory,
+                  },
+                });
+
+                webView.postMessage({
+                  type: "updateImages",
+                  data: { images: updatedImages },
+                });
+              }
+            } catch (error) {
+              console.error("Error generating image:", error);
+            }
             break;
+
           default:
             throw new Error(`Unknown message type: ${message satisfies never}`);
         }
@@ -91,6 +134,15 @@ Devvit.addCustomPostType({
           </vstack>
           <spacer />
           <button onPress={() => webView.mount()}>Add to the Story!</button>
+          <text size="large" weight="bold">
+            Generated Images:
+          </text>
+          {images.map((img: any, index: string) => {
+            <vstack key={index} padding="small" alignment="center">
+              <image url={img.imageURL} imageHeight="32px" imageWidth="32px" />
+              <text size="small">{`Inspired by: "${img.storyPart}"`}</text>
+            </vstack>;
+          })}
         </vstack>
       </vstack>
     );

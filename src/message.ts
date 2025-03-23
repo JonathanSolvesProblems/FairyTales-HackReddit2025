@@ -1,7 +1,8 @@
 /** Message from Devvit to the web view. */
 export type DevvitMessage =
-  | { type: 'initialData'; data: { username: string; storySoFar: Array<{ username: string; text: string }> } }
-  | { type: 'updateStory'; data: { storySoFar: Array<{ username: string; text: string; }> } };
+  | { type: 'initialData'; data: { username: string; storySoFar: Array<{ username: string; text: string }>; images: Array<{ imageURL: string; storyPart: string }> } }
+  | { type: 'updateStory'; data: { storySoFar: Array<{ username: string; text: string; }> } }
+  | { type: 'updateImages'; data: { images: Array<{ storyPart: string; imageURL: string }> } };
 
 /** Message from the web view to Devvit. */
 export type WebViewMessage =
