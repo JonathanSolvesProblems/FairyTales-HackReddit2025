@@ -29,6 +29,8 @@ Devvit.addCustomPostType({
       return imageData ? JSON.parse(imageData) : [];
     });
 
+    const [comicView, setComicView] = useState(false);
+
     const webView = useWebView<WebViewMessage, DevvitMessage>({
       // URL of your web view content
       url: "page.html",
@@ -64,7 +66,7 @@ Devvit.addCustomPostType({
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
-                    prompt: updatedStory.map((part) => part.text).join(" "),
+                    prompt: "frog", // updatedStory.map((part) => part.text).join(" "),
                   }),
                 }
               );
@@ -119,30 +121,55 @@ Devvit.addCustomPostType({
             Collaborative Storytelling Game: FairyTales
           </text>
           <spacer />
+
           <vstack alignment="start middle">
             <text size="medium">
               Username: <text weight="bold">{username}</text>
             </text>
-            <text size="medium">Story So Far:</text>
-            {story.map(
-              (entry: { username: string; text: string }, index: string) => (
-                <text key={index} size="small">
-                  {entry.username}: {entry.text}
+
+            {/* Toggle Button for Comic vs. Story Mode */}
+            <button onPress={() => setComicView(!comicView)}>
+              {comicView ? "Back to Story View" : "View as Comic Book"}
+            </button>
+
+            {/* Conditional Render: Story View vs. Comic Book View */}
+            {!comicView ? (
+              <>
+                <text size="medium">Story So Far:</text>
+                {story.map(
+                  (
+                    entry: { username: string; text: string },
+                    index: string
+                  ) => (
+                    <text key={index} size="small">
+                      {entry.username}: {entry.text}
+                    </text>
+                  )
+                )}
+                <button onPress={() => webView.mount()}>
+                  Add to the Story!
+                </button>
+              </>
+            ) : (
+              <vstack alignment="center" padding="medium">
+                <text size="large" weight="bold">
+                  Comic Book View
                 </text>
-              )
+
+                {/* Render the Comic Book Panels */}
+                {images.map((img: any, index: string) => (
+                  <vstack key={index} padding="small" alignment="center">
+                    <image
+                      url={img.imageURL}
+                      imageHeight="200px"
+                      imageWidth="300px"
+                    />
+                    <text size="small">{`Inspired by: "${img.storyPart}"`}</text>
+                  </vstack>
+                ))}
+              </vstack>
             )}
           </vstack>
-          <spacer />
-          <button onPress={() => webView.mount()}>Add to the Story!</button>
-          <text size="large" weight="bold">
-            Generated Images:
-          </text>
-          {images.map((img: any, index: string) => {
-            <vstack key={index} padding="small" alignment="center">
-              <image url={img.imageURL} imageHeight="32px" imageWidth="32px" />
-              <text size="small">{`Inspired by: "${img.storyPart}"`}</text>
-            </vstack>;
-          })}
         </vstack>
       </vstack>
     );

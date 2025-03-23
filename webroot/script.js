@@ -122,6 +122,7 @@ class App {
     story.forEach((entry) => {
       const storyPart = document.createElement('p');
       storyPart.textContent = `${entry.username}: ${entry.text}`;
+      storyPart.classList.add('story-part');
       this.storyContainer.appendChild(storyPart);
     });
   }
@@ -134,11 +135,12 @@ class App {
     this.imageGallery.innerHTML = ''; // Clear existing images
     images.forEach((entry) => {
       const imageContainer = document.createElement('div');
+      imageContainer.classList.add('image-item');
+
       const img = document.createElement('img');
       img.src = entry.imageURL;
       img.alt = `Inspired by: ${entry.storyPart}`;
-      img.style.maxWidth = '100%';
-
+   
       const caption = document.createElement('p');
       caption.textContent = `Inspired by: "${entry.storyPart}"`;
 

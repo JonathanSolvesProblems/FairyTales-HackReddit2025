@@ -5,12 +5,13 @@
   --accent-color: #60a5fa;
   --border-radius: 6px;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --hover-color: #3b82f6;
 }
 
 body {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
   padding: 1rem;
   max-width: 650px;
   margin: 0 auto;
@@ -19,9 +20,6 @@ body {
   color: var(--text-color);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.3;
-  position: fixed;
-  width: 100%;
-  height: 100%;
 }
 
 h1,
@@ -53,7 +51,60 @@ h3 {
   font-weight: 600;
 }
 
-/* New button container */
+#storyContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Space between story parts */
+  border: 1px solid #ccc;
+  border-radius: var(--border-radius);
+  padding: 10px;
+  background-color: #fff;
+  max-height: 150px;
+  overflow-y: auto; /* Scroll when content overflows */
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+}
+
+#storyContainer p {
+  margin: 0; /* Remove default margin to align story parts */
+  padding: 5px;
+  background-color: #f9fafb;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+#storyContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+#storyContainer::-webkit-scrollbar-thumb {
+  background-color: var(--primary-color);
+  border-radius: var(--border-radius);
+}
+
+#storyContainer::-webkit-scrollbar-track {
+  background-color: #f3f4f6;
+}
+
+textarea {
+  width: 100%;
+  height: 100px;
+  border: 1px solid #ccc;
+  border-radius: var(--border-radius);
+  padding: 10px;
+  margin-bottom: 5px;
+  resize: none;
+  box-shadow: var(--shadow);
+  background-color: white;
+}
+
+#charCounter {
+  text-align: right;
+  margin-bottom: 10px;
+  color: var(--primary-color);
+}
+
+/* Buttons Styling */
 .button-container {
   display: flex;
   gap: 0.5rem;
@@ -70,16 +121,14 @@ button {
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  transition:
-    transform 0.2s,
-    box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
   box-shadow: var(--shadow);
-  margin: 0;
 }
 
 button:hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: var(--hover-color);
 }
 
 button:active {
@@ -90,6 +139,27 @@ button:active {
   background-color: var(--primary-color);
 }
 
+/* Styling the Image Gallery for consistency */
+#imageGallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 20px;
+}
+
+#imageGallery div {
+  text-align: center;
+}
+
+#imageGallery img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--border-radius);
+  object-fit: cover;
+  box-shadow: var(--shadow);
+}
+
+/* Output Message Container */
 pre {
   background-color: white;
   padding: 0.75rem;
@@ -102,6 +172,13 @@ pre {
   margin: 0;
 }
 
+#imageGallery p {
+  margin-top: 5px;
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
+/* Responsive Media Query */
 @media (max-width: 640px) {
   body {
     padding: 0.75rem;
@@ -111,24 +188,4 @@ pre {
   h1 {
     font-size: 1.5rem;
   }
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-#storyContainer {
-  width: 100%;
-  max-height: 300px;
-  overflow-y: auto;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-}
-
-#storyInput {
-  width: 100%;
-  height: 100px;
-  margin-top: 10px;
 }
