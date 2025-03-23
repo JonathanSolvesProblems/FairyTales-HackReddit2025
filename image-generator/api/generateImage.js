@@ -1,5 +1,4 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { VercelRequest, VercelResponse } from '@vercel/node';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
