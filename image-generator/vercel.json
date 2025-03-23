@@ -1,6 +1,0 @@
-{
-  "cors": {
-    "origin": ["*"],
-    "methods": ["GET", "POST"]
-  }
-}

@@ -29,6 +29,8 @@ class App {
     // This event gets called when the web view is loaded
     addEventListener('load', () => {
       postWebViewMessage({ type: 'webViewReady' });
+
+
     });
 
     // this.increaseButton.addEventListener('click', () => {
